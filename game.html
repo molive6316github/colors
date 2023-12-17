@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Game with Power-ups</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        button {
+            margin-bottom: 20px;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #powerups {
+            display: flex;
+        }
+
+        .powerup {
+            margin-right: 10px;
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .powerup:hover {
+            background-color: #ecf0f1;
+        }
+
+        #shop {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            text-align: center;
+            z-index: 1;
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+
+        .shop h2 {
+            color: #e74c3c;
+        }
+
+        .shop-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            background-color: #ecf0f1;
+            text-align: left;
+        }
+
+        .shop-item h3 {
+            color: #e74c3c;
+        }
+
+        .shop-item p {
+            color: #555;
+        }
+
+        #closeShop {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <button id="funButton" onclick="increaseScore()">Click Me!</button>
+    <div id="score">Score: <span id="scoreValue">0</span></div>
+    <div id="powerups">
+        <!-- Power-Up 1, Power-Up 2, and Auto Power-Up 1 are now in the shop -->
+    </div>
+    
+    <button id="shopButton" onclick="openShop()">Open Shop</button>
+
+    <div id="shop">
+        <span id="closeShop" onclick="closeShop()">X</span>
+        <h2>Shop</h2>
+        <div class="shop-item">
+            <h3 style="color: #e74c3c;">Power-Up 1</h3>
+            <p>Description: Increase your clicking power by 1!</p>
+            <button class="powerup" onclick="buyPowerUp(5)">Buy (Cost: 5)</button>
+        </div>
+        <div class="shop-item">
+            <h3 style="color: #27ae60;">Power-Up 2</h3>
+            <p>Description: Double your clicking power!</p>
+            <button class="powerup" onclick="buyPowerUp(10)">Buy (Cost: 10)</button>
+        </div>
+        <div class="shop-item">
+            <h3 style="color: #f39c12;">Auto Power-Up 1</h3>
+            <p>Description: Automatically gain points every second!</p>
+            <button class="powerup" onclick="buyAutoPowerUp(20)">Buy (Cost: 20)</button>
+        </div>
+        <div class="shop-item">
+            <h3 style="color: #e74c3c;">Power-Up 3</h3>
+            <p>Description: This power-up doubles your clicking power!</p>
+            <button class="powerup" onclick="buyPowerUp(15)">Buy (Cost: 15)</button>
+        </div>
+        <div class="shop-item">
+            <h3 style="color: #27ae60;">Auto Power-Up 2</h3>
+            <p>Description: An advanced auto power-up that increases your score even faster!</p>
+            <button class="powerup" onclick="buyAutoPowerUp(30)">Buy (Cost: 30)</button>
+        </div>
+        <div class="shop-item">
+            <h3 style="color: #f39c12;">Power-Up 4</h3>
+            <p>Description: Gain extra points every time you click!</p>
+            <button class="powerup" onclick="buyPowerUp(25)">Buy (Cost: 25)</button>
+        </div>
+        <div class="shop-item">
+            <h3 style="color: #3498db;">Auto Power-Up 3</h3>
+            <p>Description: The ultimate auto power-up that supercharges your score!</p>
+            <button class="powerup" onclick="buyAutoPowerUp(50)">Buy (Cost: 50)</button>
+        </div>
+        <!-- Add more power-ups here -->
+    </div>
+
+    <script>
+        var score = 0;
+        var powerUp1 = 1;
+        var powerUp2 = 2;
+        var autoPowerUp = 0;
+
+        function increaseScore() {
+            score += powerUp1;
+            updateScore();
+            changeColor();
+        }
+
+        function updateScore() {
+            document.getElementById('scoreValue').innerText = score;
+        }
+
+        function buyPowerUp(cost) {
+            if (score >= cost) {
+                score -= cost;
+                powerUp1 += 1; // Increase the power of the first power-up
+                updateScore();
+            } else {
+                alert("Not enough points to buy this power-up!");
+            }
+        }
+
+        function buyAutoPowerUp(cost) {
+            if (score >= cost && autoPowerUp === 0) {
+                score -= cost;
+                autoPowerUp = setInterval(function() {
+                    score += powerUp2;
+                    updateScore();
+                }, 1000); // Increase score every second
+                updateScore();
+            } else if (autoPowerUp !== 0) {
+                alert("Auto Power-Up already active!");
+            } else {
+                alert("Not enough points to buy this power-up!");
+            }
+        }
+
+        function openShop() {
+            document.getElementById('shop').style.display = 'block';
+        }
+
+        function closeShop() {
+            document.getElementById('shop').style.display = 'none';
+        }
+
+        function changeColor() {
+            var button = document.getElementById('funButton');
+            var randomColor = getRandomColor();
+            button.style.backgroundColor = randomColor;
+        }
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    </script>
+</body>
+</html>
